@@ -41,6 +41,9 @@ class ClassroomController extends AbstractController
 
         return $this->redirectToRoute('listClassroom');
     }
+
+    
+    
     #[Route('/showClassroom/{id}', name: 'showClassroom')]
     public function showClassroom($id, ManagerRegistry $doctrine): Response
     {
@@ -70,4 +73,43 @@ class ClassroomController extends AbstractController
             'formClassroom'=> $form->createView(),
         ]);
     }
+
+
+
+
+
+    #[Route('/editClassroom/{id}', name: 'EditClassroom')]
+    public function editClassroom (Request $request, $id, ManagerRegistry $doctrine): Response 
+    {
+
+            $repoC = $doctrine->getRepository(Classroom::class);
+            $classroom= $repoC->find($id);
+            $form=$this->createForm(ClassroomType::class, $classroom);
+            $form->handleRequest($request);
+            if ($form->isSubmitted()) {
+                $em = $doctrine->getManager();
+                $classroom = $form->getData();
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('listClassroom'));
+
+            }
+
+            return $this->render(
+                'classroom/editClassroom.html.twig',
+                array('form' => $form->createView())
+            );
+
 }
+
+
+
+
+
+
+
+
+}
+
+
+    
